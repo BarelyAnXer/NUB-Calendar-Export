@@ -1,0 +1,37 @@
+{
+    "name": "NUIS Schedule Exporter",
+    "version": "1.0.0",
+    "description": "Web extension for converting NUIS My Schedule Viewer to .ics (ICalender) which can be used in Google Calender ",
+    "permissions": [
+        "storage",
+        "tabs"
+    ],
+    "host_permissions": [
+        "https://*.onlineapp.nu-baliwag.edu.ph/*"
+    ],
+    "content_scripts": [
+        {
+            "matches": [
+                "https://*.onlineapp.nu-baliwag.edu.ph/*"
+            ],
+            "js": [
+                "contentScript.js"
+            ]
+        }
+    ],
+    "web_accessible_resources": [
+        {
+            "resources": [],
+            "matches": [
+                "https://*.onlineapp.nu-baliwag.edu.ph/*"
+            ]
+        }
+    ],
+    "action": {
+        "default_icon": {
+        },
+        "default_title": "NUIS Schedule Exporter",
+        "default_popup": "popup.html"
+    },
+    "manifest_version": 3
+}
