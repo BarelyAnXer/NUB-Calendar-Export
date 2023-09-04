@@ -39,7 +39,7 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
     }
 
     scheduleEntries.pop()
-
+    console.log(scheduleEntries)
     chrome.runtime.sendMessage({
         type: "receiveschedule",
         schedule: scheduleEntries
