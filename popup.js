@@ -55,6 +55,8 @@ function generateUUID() {
 function convertToICS(data) {
     let icsData = "BEGIN:VCALENDAR\r\n";
     icsData += "VERSION:2.0\r\n";
+    // icsData += "X-WR-TIMEZONE:Asia/Manila\r\n"
+
 
     data.forEach(event => {
         // const uid = `${event.subjectCode}-${event.section}-${event.times[0].starttime}-${event.times[0].endtime}-${new Date().toISOString()}`;
@@ -69,6 +71,7 @@ function convertToICS(data) {
             const uid = generateUUID();
             const startTime = formatTime(event.times[i].starttime);
             const endTime = formatTime(event.times[i].endtime);
+            console.log(event.times[i].starttime, event.times[i].endtime)
 
             console.log(day, getDayCode(day), "Flag")
 
@@ -78,12 +81,14 @@ function convertToICS(data) {
             icsData += "BEGIN:VEVENT\r\n";
             icsData += `UID:${uid}\r\n`;
             icsData += `SUMMARY:${summary}\r\n`;
-            icsData += `DTSTART:${dtStart}\r\n`;
-            icsData += `DTEND:${dtEnd}\r\n`;
-            // icsData += "RRULE:FREQ=WEEKLY;UNTIL=20231231T235959Z\r\n";
+            icsData += `DTSTART;TZID=Asia/Manila:${dtStart}\r\n`;
+            icsData += `DTEND;TZID=Asia/Manila:${dtEnd}\r\n`;
+            icsData += "RRULE:FREQ=WEEKLY;UNTIL=20231231T235959Z\r\n";
             icsData += "END:VEVENT\r\n";
         }
     });
+    // 01:00PM 03:00PM
+    // 11:00AM 01:00PM
 
     icsData += "END:VCALENDAR\r\n";
     return icsData;
@@ -98,17 +103,44 @@ function getDayCode(targetDay) {
     const daysToAdd = (targetDayIndex - currentDayOfWeek) % 7;
     const relativeDate = new Date(currentDate);
     relativeDate.setDate(currentDate.getDate() + daysToAdd);
-    return relativeDate.getDate();
+    return relativeDate.getDate().toString().padStart(2, '0');
 }
 
-function formatTime(time) {
-    return time.replace(/(\d+):(\d+)([APM]+)$/, function (match, hh, mm, ampm) {
-        if (ampm === "PM" && hh !== "12") {
-            hh = (parseInt(hh) + 12).toString();
+
+function formatTime(timeString) {
+    // Split the input time string into hours and minutes
+    const timeParts = timeString.match(/(\d{2}):(\d{2})([APM]{2})/);
+
+    if (timeParts && timeParts.length === 4) {
+        let hours = parseInt(timeParts[1], 10);
+        const minutes = timeParts[2];
+        const period = timeParts[3];
+
+        // Adjust hours for PM times
+        if (period === "PM" && hours !== 12) {
+            hours += 12;
         }
-        return `${hh}${mm}00`;
-    });
+
+        // Convert hours to a 2-digit string
+        hours = hours.toString().padStart(2, '0');
+
+        // Build the Google Calendar time format
+        return `${hours}${minutes}00`;
+    } else {
+        // Invalid input format
+        return "Invalid time format";
+    }
 }
+
+
+// function formatTime(time) {
+//     return time.replace(/(\d+):(\d+)([APM]+)$/, function (match, hh, mm, ampm) {
+//         if (ampm === "PM" && hh !== "12") {
+//             hh = (parseInt(hh) + 12).toString();
+//         }
+//         return `${hh}${mm}00`;
+//     });
+// }
 
 function downloadICS(content) {
     const blob = new Blob([content], { type: 'text/calendar;charset=utf-8' });

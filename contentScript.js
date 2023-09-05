@@ -16,7 +16,7 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
 
         let pairs = data[4]?.textContent.trim().match(/(\d{2}:\d{2}[APM]{2} - \d{2}:\d{2}[APM]{2})/g);
         let parsedTimes = []
-        
+
         if (!pairs) {
             console.log("No time ranges found.");
         } else {
@@ -48,4 +48,4 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
 });
 // })();
 
-
+// paaayos kay chatgpt pa imrpove wihout changing the outcome or logic
