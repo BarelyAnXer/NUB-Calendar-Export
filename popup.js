@@ -10,7 +10,6 @@ document.querySelector('#convertButton').addEventListener('click', function () {
     });
 });
 
-
 chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
     const alertBox = document.querySelector("#display-box");
     let newTag = document.querySelector(".display-text");
@@ -71,15 +70,17 @@ function convertToICS(data) {
             const startTime = formatTime(event.times[i].starttime);
             const endTime = formatTime(event.times[i].endtime);
 
-            const dtStart = `202309${getDayCode(day)}T${startTime}`;
-            const dtEnd = `202309${getDayCode(day)}T${endTime}`;
+            console.log(day, getDayCode(day), "Flag")
+
+            const dtStart = `${new Date().getFullYear()}09${getDayCode(day)}T${startTime}Z`;
+            const dtEnd = `${new Date().getFullYear()}09${getDayCode(day)}T${endTime}Z`;
 
             icsData += "BEGIN:VEVENT\r\n";
             icsData += `UID:${uid}\r\n`;
             icsData += `SUMMARY:${summary}\r\n`;
             icsData += `DTSTART:${dtStart}\r\n`;
             icsData += `DTEND:${dtEnd}\r\n`;
-            icsData += "RRULE:FREQ=WEEKLY;UNTIL=20231231T235959Z\r\n";
+            // icsData += "RRULE:FREQ=WEEKLY;UNTIL=20231231T235959Z\r\n";
             icsData += "END:VEVENT\r\n";
         }
     });
@@ -88,10 +89,16 @@ function convertToICS(data) {
     return icsData;
 }
 
-// TODO need ayusin pano yung sa mga saturday sunday
-function getDayCode(day) {
-    const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
-    return (days.indexOf(day) + 1).toString().padStart(2, '0');
+function getDayCode(targetDay) {
+    const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+
+    const currentDate = new Date();
+    const currentDayOfWeek = currentDate.getDay();
+    const targetDayIndex = daysOfWeek.indexOf(targetDay);
+    const daysToAdd = (targetDayIndex - currentDayOfWeek) % 7;
+    const relativeDate = new Date(currentDate);
+    relativeDate.setDate(currentDate.getDate() + daysToAdd);
+    return relativeDate.getDate();
 }
 
 function formatTime(time) {
