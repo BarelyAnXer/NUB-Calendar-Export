@@ -4,7 +4,8 @@
     "description": "Web extension for converting NUIS My Schedule Viewer to .ics (ICalender) which can be used in Google Calender ",
     "permissions": [
         "storage",
-        "tabs"
+        "tabs",
+        "activeTab"
     ],
     "host_permissions": [
         "https://*.onlineapp.nu-baliwag.edu.ph/*"

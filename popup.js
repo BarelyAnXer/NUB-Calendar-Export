@@ -1,20 +1,28 @@
 document.querySelector('#convertButton').addEventListener('click', function () {
     chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
         const currentTab = tabs[0];
-
-
         chrome.tabs.sendMessage(currentTab.id, { type: 'getschedule' });
-
-
-
     });
 });
+
+chrome.runtime.onConnect.addListener(function (port) {
+    console.assert(port.name === "content-script");
+    port.onMessage.addListener(function (msg) {
+        // Handle messages from content scripts here
+        console.timeLog("123123")
+        if (msg.type === "receiveschedule") {
+            console.timeLog("asd")
+        }
+    });
+});
+
+
 
 chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
     const alertBox = document.querySelector("#display-box");
     let newTag = document.querySelector(".display-text");
 
-    console.log(request.schedule)
+    // console.log(request.schedule)
 
     const icsContent = convertToICS(request.schedule);
 
@@ -71,9 +79,9 @@ function convertToICS(data) {
             const uid = generateUUID();
             const startTime = formatTime(event.times[i].starttime);
             const endTime = formatTime(event.times[i].endtime);
-            console.log(event.times[i].starttime, event.times[i].endtime)
+            // console.log(event.times[i].starttime, event.times[i].endtime)
 
-            console.log(day, getDayCode(day), "Flag")
+            // console.log(day, getDayCode(day), "Flag")
 
             const dtStart = `${new Date().getFullYear()}09${getDayCode(day)}T${startTime}Z`;
             const dtEnd = `${new Date().getFullYear()}09${getDayCode(day)}T${endTime}Z`;

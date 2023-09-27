@@ -1,9 +1,16 @@
 chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
-    // (() => {
-    console.log(request)
+    console.log(request);
 
-    const tableData = document.querySelector('#list > div > table')
-    const rows = tableData.getElementsByTagName("tbody")[0].getElementsByTagName("tr")
+    // Check if the current active webpage is the target page
+    const isTargetPage = window.location.href === 'https://onlineapp.nu-baliwag.edu.ph/projectnuis/modules/students/schedule/viewer.php';
+
+    if (!isTargetPage) {
+        // Redirect to the target page
+        window.location.href = 'https://onlineapp.nu-baliwag.edu.ph/projectnuis/modules/students/schedule/viewer.php';
+    }
+
+    const tableData = document.querySelector('#list > div > table');
+    const rows = tableData.getElementsByTagName("tbody")[0].getElementsByTagName("tr");
     const scheduleEntries = [];
 
     for (let i = 0; i < rows.length; i++) {
@@ -38,14 +45,11 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
         scheduleEntries.push(entry);
     }
 
-    scheduleEntries.pop()
-    console.log(scheduleEntries)
+    // remove the extra data that we don't need
+    scheduleEntries.pop();
+
     chrome.runtime.sendMessage({
         type: "receiveschedule",
         schedule: scheduleEntries
     });
-
 });
-// })();
-
-// paaayos kay chatgpt pa imrpove wihout changing the outcome or logic
